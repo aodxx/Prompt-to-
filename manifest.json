@@ -1,0 +1,26 @@
+{
+  "name": "คลัง Prompt Template",
+  "short_name": "Prompt Template",
+  "description": "แอปจัดการและคัดลอก Prompt Template พร้อมระบบตัวแปรอัตโนมัติ",
+  "start_url": "/Prompt-to-/index.html",
+  "scope": "/Prompt-to-/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1B1D23",
+  "theme_color": "#1B1D23",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "/Prompt-to-/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Prompt-to-/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
