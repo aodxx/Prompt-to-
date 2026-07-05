@@ -65,6 +65,8 @@
   .item .name{font-size:14.5px;font-weight:500;color:var(--text-light);}
   .item .cat{font-size:10.5px;color:var(--brass);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
   .item .snippet{font-size:12px;color:var(--muted);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'IBM Plex Mono';}
+  .item .demo-link{font-size:11px;color:var(--brass);margin-top:4px;display:inline-block;text-decoration:none;}
+  .item .demo-link:hover{text-decoration:underline;}
   .empty-msg{color:var(--muted);font-size:13px;padding:20px 10px;text-align:center;}
 
   /* ---------- WORKSPACE ---------- */
@@ -79,6 +81,8 @@
   #ws-meta input{font-family:'Kanit';font-size:12.5px;background:var(--paper-2);border:1px solid var(--paper-line);border-radius:100px;padding:5px 12px;color:var(--text-dark);}
   #ws-meta input#f-category{width:150px;}
   #ws-meta input#f-tags{width:220px;}
+  #ws-meta input#f-demo{width:260px;font-family:'IBM Plex Mono';}
+  #ws-meta a.demo-open{font-size:12px;color:var(--brass-deep);text-decoration:none;align-self:center;}
 
   .ws-actions{display:flex;gap:8px;flex-shrink:0;}
   .btn{padding:9px 16px;border-radius:6px;font-family:'Kanit';font-size:13.5px;font-weight:500;cursor:pointer;border:1px solid transparent;white-space:nowrap;}
@@ -106,13 +110,31 @@
   .field-card textarea:focus, .field-card input:focus{outline:none;}
   .no-vars-msg{color:var(--muted-dark);font-size:13px;padding:12px 0;}
 
+  /* ---------- Gemini Co-Pilot ---------- */
+  #copilot-wrap{margin:18px 30px 0;background:#20242C;border:1px solid #383C46;border-radius:10px;padding:16px;}
+  #copilot-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+  #copilot-head .spark{color:var(--brass);font-size:16px;}
+  #copilot-head span{font-size:12.5px;letter-spacing:1px;text-transform:uppercase;color:#B9BCC4;font-family:'Kanit';font-weight:500;}
+  #copilot-row{display:flex;gap:10px;}
+  #copilot-input{flex:1;background:#1B1E25;border:1px solid #3A3D46;border-radius:7px;padding:10px 12px;color:var(--text-light);font-family:'Kanit';font-size:13.5px;resize:none;min-height:44px;}
+  #copilot-input:focus{outline:none;border-color:var(--brass);}
+  #copilot-btn{background:var(--brass);color:#211a08;border:none;padding:0 18px;border-radius:7px;font-family:'Kanit';font-weight:600;font-size:13.5px;cursor:pointer;white-space:nowrap;}
+  #copilot-btn:hover{background:#c99a3c;}
+  #copilot-btn:disabled{opacity:.6;cursor:wait;}
+  #copilot-hint{font-size:11.5px;color:#8B8F98;margin-top:8px;}
+
   #preview-wrap{margin:14px 30px 0;}
-  #preview-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-dark);margin-bottom:6px;}
-  #preview{background:var(--text-dark);color:#F1EBDC;font-family:'IBM Plex Mono';font-size:13.5px;line-height:1.7;padding:16px;border-radius:8px;max-height:160px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+  #preview-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  #preview-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-dark);}
+  #sync-btn{font-size:11.5px;color:var(--brass-deep);background:transparent;border:none;cursor:pointer;font-family:'Kanit';text-decoration:underline;padding:0;}
+  #preview{width:100%;background:var(--text-dark);color:#F1EBDC;font-family:'IBM Plex Mono';font-size:13.5px;line-height:1.7;padding:16px;border-radius:8px;min-height:120px;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;border:1px solid transparent;resize:vertical;}
+  #preview:focus{outline:none;border-color:var(--brass);}
 
   #ws-footer{padding:16px 30px 22px;display:flex;gap:10px;align-items:center;}
   #copy-btn{flex:1;background:var(--brass);color:#211a08;border:none;padding:14px;border-radius:8px;font-family:'Kanit';font-weight:600;font-size:15px;cursor:pointer;letter-spacing:.3px;}
   #copy-btn:hover{background:#c99a3c;}
+  #save-new-btn{background:var(--stamp);color:#fff;border:none;padding:14px 16px;border-radius:8px;font-family:'Kanit';font-size:13.5px;cursor:pointer;white-space:nowrap;}
+  #save-new-btn:hover{background:#4b6d5d;}
   #clear-btn{background:transparent;border:1px solid var(--paper-line);color:var(--text-dark);padding:14px 18px;border-radius:8px;font-family:'Kanit';font-size:14px;cursor:pointer;}
 
   #image-row{display:flex;align-items:center;gap:10px;margin:14px 30px 0;}
@@ -162,6 +184,8 @@
           <div id="ws-meta">
             <input id="f-category" placeholder="หมวดหมู่">
             <input id="f-tags" placeholder="แท็ก, คั่นด้วยจุลภาค">
+            <input id="f-demo" placeholder="🔗 ลิงก์ผลงาน (เช่น เกม 3D / แอป Interactive ที่ deploy แล้ว)">
+            <a id="demo-open-link" class="demo-open" href="#" target="_blank" rel="noopener" style="display:none;">↗ เปิดลิงก์</a>
           </div>
         </div>
         <div class="ws-actions">
@@ -188,14 +212,27 @@
         <div id="form-fields"></div>
       </div>
 
+      <div id="copilot-wrap">
+        <div id="copilot-head"><span class="spark">✨</span><span>Gemini Co-Pilot</span></div>
+        <div id="copilot-row">
+          <textarea id="copilot-input" rows="1" placeholder='บอก Gemini เพิ่มเติม เช่น "เน้นโทนจริงจังขึ้น" หรือ "ปรับให้เข้ากับโปรเจกต์การตลาด"'></textarea>
+          <button id="copilot-btn">ให้ Gemini ปรับแต่ง</button>
+        </div>
+        <div id="copilot-hint">Gemini จะอิงโครงสร้าง/สไตล์ของ Template เดิม + ค่าที่กรอกในฟอร์ม + คำสั่งด้านบน แล้วส่งกลับมาที่ช่องผลลัพธ์ด้านล่าง</div>
+      </div>
+
       <div id="preview-wrap">
-        <div id="preview-label">ตัวอย่างผลลัพธ์สุดท้าย</div>
-        <div id="preview"></div>
+        <div id="preview-label-row">
+          <span id="preview-label">ตัวอย่างผลลัพธ์สุดท้าย (แก้ไขได้โดยตรง)</span>
+          <button id="sync-btn" style="display:none;">🔄 ซิงค์ค่าจากฟอร์มอีกครั้ง</button>
+        </div>
+        <textarea id="preview"></textarea>
       </div>
 
       <div id="ws-footer">
         <button id="clear-btn">ล้างค่า</button>
         <button id="copy-btn">📋 คัดลอก (Copy to Clipboard)</button>
+        <button id="save-new-btn">💾 บันทึกเป็นสไตล์ใหม่</button>
       </div>
     </div>
   </main>
@@ -217,6 +254,7 @@ let activeItem = null;
 let mode = 'form'; // 'form' | 'raw'
 let activeCategory = 'ทั้งหมด';
 let pendingImageURL = '';
+let previewManuallyEdited = false; // true after Gemini refine or hand-edit; stops auto-sync from form
 
 /* ================= UTIL ================= */
 function toast(msg){
@@ -254,6 +292,10 @@ async function apiUpdate(id, payload){
 }
 async function apiDelete(id){
   const res = await fetch(`${CONFIG.API_URL}?action=delete&id=${encodeURIComponent(id)}`);
+  return res.json();
+}
+async function apiRefine(payload){
+  const res = await fetch(`${CONFIG.API_URL}?action=refine&data=${encodeURIComponent(JSON.stringify(payload))}`);
   return res.json();
 }
 
@@ -357,6 +399,7 @@ function renderList(){
       <div class="row1"><span class="name">${escapeHtml(i.Name || '(ไม่มีชื่อ)')}</span></div>
       <div class="cat">${escapeHtml(i.Category || 'ไม่มีหมวดหมู่')}</div>
       <div class="snippet">${escapeHtml((i.Content || '').slice(0,60))}</div>
+      ${i.DemoURL ? `<a class="demo-link" href="${escapeHtml(i.DemoURL)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ ดูผลงานที่เคยได้</a>` : ''}
     `;
     div.onclick = ()=> openItem(i.ID);
     el.appendChild(div);
@@ -371,14 +414,20 @@ function escapeHtml(s){
 function openItem(id){
   activeId = id;
   activeItem = items.find(i=>i.ID === id) || null;
+  previewManuallyEdited = false;
+  document.getElementById('sync-btn').style.display = 'none';
+  document.getElementById('copilot-input').value = '';
   renderList();
   renderWorkspace();
 }
 
 function newItem(){
   activeId = null;
-  activeItem = { ID:'', Name:'', Category:'', Tags:'', Content:'', Description:'', ImageURL:'' };
+  activeItem = { ID:'', Name:'', Category:'', Tags:'', Content:'', Description:'', ImageURL:'', DemoURL:'' };
   pendingImageURL = '';
+  previewManuallyEdited = false;
+  document.getElementById('sync-btn').style.display = 'none';
+  document.getElementById('copilot-input').value = '';
   renderList();
   renderWorkspace();
   document.getElementById('ws-title-input').focus();
@@ -396,6 +445,8 @@ function renderWorkspace(){
   document.getElementById('ws-title-input').value = activeItem.Name || '';
   document.getElementById('f-category').value = activeItem.Category || '';
   document.getElementById('f-tags').value = activeItem.Tags || '';
+  document.getElementById('f-demo').value = activeItem.DemoURL || '';
+  updateDemoOpenLink();
   document.getElementById('raw-textarea').value = activeItem.Content || '';
   document.getElementById('delete-btn').style.display = activeItem.ID ? 'inline-block' : 'none';
 
@@ -407,6 +458,14 @@ function renderWorkspace(){
   renderFormFields();
   renderPreview();
 }
+
+function updateDemoOpenLink(){
+  const url = document.getElementById('f-demo').value.trim();
+  const link = document.getElementById('demo-open-link');
+  if(url){ link.href = url; link.style.display = 'inline-block'; }
+  else { link.style.display = 'none'; }
+}
+document.getElementById('f-demo').addEventListener('input', updateDemoOpenLink);
 
 function renderFormFields(){
   const content = document.getElementById('raw-textarea').value;
@@ -437,7 +496,8 @@ function getFormValues(){
   return values;
 }
 
-function renderPreview(){
+function renderPreview(force){
+  if(previewManuallyEdited && !force) return; // don't clobber a Gemini result or hand-edit
   const content = document.getElementById('raw-textarea').value;
   let output = content;
   if(mode === 'form'){
@@ -447,7 +507,13 @@ function renderPreview(){
       return (val !== undefined && val !== '') ? val : match;
     });
   }
-  document.getElementById('preview').textContent = output;
+  document.getElementById('preview').value = output;
+}
+
+function resyncPreviewFromForm(){
+  previewManuallyEdited = false;
+  document.getElementById('sync-btn').style.display = 'none';
+  renderPreview(true);
 }
 
 /* ================= MODE TOGGLE ================= */
@@ -461,4 +527,165 @@ function setMode(m){
 }
 
 /* ================= EVENTS ================= */
-document
+document.getElementById('search').addEventListener('input', renderList);
+document.getElementById('new-btn').addEventListener('click', newItem);
+document.getElementById('mode-form').addEventListener('click', ()=>setMode('form'));
+document.getElementById('mode-raw').addEventListener('click', ()=>setMode('raw'));
+document.getElementById('raw-textarea').addEventListener('input', ()=>{ renderFormFields(); renderPreview(); });
+
+document.getElementById('clear-btn').addEventListener('click', ()=>{
+  document.querySelectorAll('#form-fields textarea').forEach(t=> t.value = '');
+  renderPreview();
+});
+
+document.getElementById('copy-btn').addEventListener('click', async ()=>{
+  const text = document.getElementById('preview').value;
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('คัดลอกแล้ว! ✓');
+  }catch(err){
+    toast('คัดลอกไม่สำเร็จ ลองอีกครั้ง');
+  }
+});
+
+document.getElementById('preview').addEventListener('input', ()=>{
+  previewManuallyEdited = true;
+  document.getElementById('sync-btn').style.display = 'inline-block';
+});
+document.getElementById('sync-btn').addEventListener('click', resyncPreviewFromForm);
+
+document.getElementById('copilot-btn').addEventListener('click', async ()=>{
+  const instruction = document.getElementById('copilot-input').value.trim();
+  const btn = document.getElementById('copilot-btn');
+  btn.disabled = true;
+  btn.textContent = 'กำลังส่งให้ Gemini…';
+  try{
+    const payload = {
+      styleName: document.getElementById('ws-title-input').value,
+      category: document.getElementById('f-category').value,
+      draftContent: document.getElementById('preview').value, // ใช้ค่าที่กรอกในฟอร์มล่าสุดเป็นฐาน
+      instruction: instruction
+    };
+    const result = await apiRefine(payload);
+    if(result.ok){
+      document.getElementById('preview').value = result.refined;
+      previewManuallyEdited = true;
+      document.getElementById('sync-btn').style.display = 'inline-block';
+      toast('Gemini ปรับแต่งเสร็จแล้ว ✨');
+    } else {
+      toast('Gemini ปรับแต่งไม่สำเร็จ: ' + (result.error || ''));
+    }
+  }catch(err){
+    toast('เชื่อมต่อ Gemini ไม่สำเร็จ');
+  }
+  btn.disabled = false;
+  btn.textContent = 'ให้ Gemini ปรับแต่ง';
+});
+
+document.getElementById('save-new-btn').addEventListener('click', ()=>{
+  const finalText = document.getElementById('preview').value;
+  if(!finalText.trim()){ toast('ยังไม่มีข้อความในผลลัพธ์'); return; }
+  const baseName = document.getElementById('ws-title-input').value || 'Prompt ใหม่';
+
+  activeId = null;
+  activeItem = {
+    ID: '',
+    Name: baseName + ' (Gemini)',
+    Category: document.getElementById('f-category').value,
+    Tags: document.getElementById('f-tags').value,
+    Content: finalText,
+    Description: '',
+    ImageURL: pendingImageURL,
+    DemoURL: ''
+  };
+  previewManuallyEdited = true;
+  renderList();
+  renderWorkspace();
+  setMode('raw');
+  document.getElementById('sync-btn').style.display = 'none';
+  document.getElementById('preview').value = finalText;
+  toast('ตั้งเป็นสไตล์ใหม่แล้ว — แก้ชื่อ/หมวดหมู่/แปะลิงก์ผลงาน แล้วกด "บันทึก" เพื่อเซฟลง Sheet');
+  document.getElementById('ws-title-input').focus();
+  document.getElementById('ws-title-input').select();
+});
+
+document.getElementById('image-file').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  document.getElementById('upload-status').textContent = 'กำลังอัปโหลด…';
+  try{
+    const url = await uploadImage(file);
+    pendingImageURL = url;
+    const imgEl = document.getElementById('image-preview');
+    imgEl.src = url; imgEl.style.display = 'inline-block';
+    document.getElementById('upload-status').textContent = 'อัปโหลดสำเร็จ ✓';
+    setTimeout(()=> document.getElementById('upload-status').textContent = '', 2000);
+  }catch(err){
+    document.getElementById('upload-status').textContent = 'อัปโหลดไม่สำเร็จ';
+  }
+});
+
+document.getElementById('save-btn').addEventListener('click', async ()=>{
+  const payload = {
+    Name: document.getElementById('ws-title-input').value.trim(),
+    Category: document.getElementById('f-category').value.trim(),
+    Tags: document.getElementById('f-tags').value.trim(),
+    Content: document.getElementById('raw-textarea').value,
+    Description: activeItem.Description || '',
+    ImageURL: pendingImageURL || '',
+    DemoURL: document.getElementById('f-demo').value.trim()
+  };
+  if(!payload.Name){ toast('กรุณาใส่ชื่อ Template'); return; }
+
+  document.getElementById('save-btn').textContent = 'กำลังบันทึก…';
+  try{
+    let result;
+    if(activeItem.ID){
+      result = await apiUpdate(activeItem.ID, payload);
+    } else {
+      result = await apiCreate(payload);
+    }
+    if(result.ok){
+      toast('บันทึกแล้ว ✓');
+      await refreshList();
+      openItem(result.item.ID);
+    } else {
+      toast('บันทึกไม่สำเร็จ: ' + (result.error || ''));
+    }
+  }catch(err){
+    toast('เชื่อมต่อ API ไม่สำเร็จ');
+  }
+  document.getElementById('save-btn').textContent = 'บันทึก';
+});
+
+document.getElementById('delete-btn').addEventListener('click', async ()=>{
+  if(!activeItem.ID) return;
+  if(!confirm(`ลบ "${activeItem.Name}" ใช่หรือไม่?`)) return;
+  const result = await apiDelete(activeItem.ID);
+  if(result.ok){
+    toast('ลบแล้ว');
+    activeId = null; activeItem = null;
+    await refreshList();
+    renderWorkspace();
+  } else {
+    toast('ลบไม่สำเร็จ');
+  }
+});
+
+/* ================= INIT ================= */
+async function refreshList(){
+  items = await apiList();
+  renderCategories();
+  renderList();
+}
+
+async function init(){
+  await refreshList();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/Prompt-to-/sw.js').catch(()=>{});
+  }
+}
+init();
+</script>
+</body>
+</html>
