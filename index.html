@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>คลัง Prompt Template</title>
+<meta name="theme-color" content="#1B1D23">
+<link rel="manifest" href="/Prompt-to-/manifest.json">
+<link rel="icon" href="/Prompt-to-/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/Prompt-to-/icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Kanit:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#1B1D23;
+    --ink-2:#24272F;
+    --ink-3:#2C2F38;
+    --line:#3A3D46;
+    --paper:#EDE6D6;
+    --paper-2:#E4DBC6;
+    --paper-line:#D2C5A6;
+    --text-dark:#2A241C;
+    --text-light:#EDEAE3;
+    --muted:#93969E;
+    --muted-dark:#8A7F6A;
+    --brass:#B8892B;
+    --brass-deep:#8F6A1F;
+    --stamp:#3F5A4D;
+    --danger:#A6453A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--text-light);font-family:'Kanit',sans-serif;height:100vh;overflow:hidden;}
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  #app{display:flex;height:100vh;}
+
+  /* ---------- SIDEBAR ---------- */
+  #sidebar{width:340px;min-width:280px;background:var(--ink);border-right:1px solid var(--line);display:flex;flex-direction:column;}
+  #sidebar-head{padding:20px 18px 12px;border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:baseline;gap:8px;margin:0 0 14px;}
+  .brand .mark{color:var(--brass);font-size:22px;}
+  .brand h1{font-size:19px;margin:0;font-weight:600;letter-spacing:.2px;}
+  .brand .eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:-10px 0 12px 30px;}
+
+  #search-wrap{position:relative;}
+  #search{width:100%;padding:10px 12px 10px 34px;background:var(--ink-2);border:1px solid var(--line);border-radius:6px;color:var(--text-light);font-family:'Kanit';font-size:14px;}
+  #search:focus{outline:none;border-color:var(--brass);}
+  #search-wrap::before{content:"⌕";position:absolute;left:11px;top:9px;color:var(--muted);font-size:15px;}
+
+  #new-btn{width:100%;margin-top:10px;padding:10px;background:var(--brass);color:#1B1D23;border:none;border-radius:6px;font-family:'Kanit';font-weight:600;font-size:14px;cursor:pointer;letter-spacing:.3px;}
+  #new-btn:hover{background:#c99a3c;}
+
+  #categories{display:flex;flex-wrap:wrap;gap:6px;padding:12px 18px;border-bottom:1px solid var(--line);}
+  .chip{padding:4px 10px;font-size:12px;border:1px solid var(--line);border-radius:100px;color:var(--muted);cursor:pointer;background:transparent;}
+  .chip.active{background:var(--brass);color:#1B1D23;border-color:var(--brass);font-weight:500;}
+
+  #list{flex:1;overflow-y:auto;padding:8px 10px;}
+  .item{padding:12px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;}
+  .item:hover{background:var(--ink-2);}
+  .item.active{background:var(--ink-3);border-color:var(--brass);}
+  .item .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .item .name{font-size:14.5px;font-weight:500;color:var(--text-light);}
+  .item .cat{font-size:10.5px;color:var(--brass);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+  .item .snippet{font-size:12px;color:var(--muted);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'IBM Plex Mono';}
+  .empty-msg{color:var(--muted);font-size:13px;padding:20px 10px;text-align:center;}
+
+  /* ---------- WORKSPACE ---------- */
+  #workspace{flex:1;display:flex;flex-direction:column;background:var(--paper);color:var(--text-dark);overflow:hidden;}
+  #ws-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--muted-dark);}
+  #ws-empty .mark{font-size:40px;color:var(--brass);margin-bottom:10px;}
+
+  #ws-head{padding:22px 30px 16px;border-bottom:1px solid var(--paper-line);display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+  #ws-title-input{font-family:'Fraunces';font-size:26px;font-weight:600;border:none;background:transparent;color:var(--text-dark);width:100%;}
+  #ws-title-input:focus{outline:none;}
+  #ws-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  #ws-meta input{font-family:'Kanit';font-size:12.5px;background:var(--paper-2);border:1px solid var(--paper-line);border-radius:100px;padding:5px 12px;color:var(--text-dark);}
+  #ws-meta input#f-category{width:150px;}
+  #ws-meta input#f-tags{width:220px;}
+
+  .ws-actions{display:flex;gap:8px;flex-shrink:0;}
+  .btn{padding:9px 16px;border-radius:6px;font-family:'Kanit';font-size:13.5px;font-weight:500;cursor:pointer;border:1px solid transparent;white-space:nowrap;}
+  .btn-save{background:var(--stamp);color:#fff;}
+  .btn-save:hover{background:#4b6d5d;}
+  .btn-delete{background:transparent;color:var(--danger);border-color:var(--danger);}
+  .btn-delete:hover{background:var(--danger);color:#fff;}
+  .btn-ghost{background:transparent;color:var(--text-dark);border-color:var(--paper-line);}
+  .btn-ghost:hover{background:var(--paper-2);}
+
+  #mode-toggle{display:flex;gap:0;margin:14px 30px 0;border:1px solid var(--paper-line);border-radius:7px;overflow:hidden;width:fit-content;}
+  #mode-toggle button{padding:7px 18px;background:transparent;border:none;font-family:'Kanit';font-size:13px;color:var(--muted-dark);cursor:pointer;}
+  #mode-toggle button.active{background:var(--text-dark);color:var(--paper);}
+
+  #editor-area{flex:1;overflow-y:auto;padding:18px 30px 10px;}
+  #raw-textarea{width:100%;min-height:220px;background:#F7F3E9;border:1px solid var(--paper-line);border-radius:8px;padding:16px;font-family:'IBM Plex Mono';font-size:14px;line-height:1.7;color:var(--text-dark);resize:vertical;}
+  #raw-textarea:focus{outline:none;border-color:var(--brass);}
+
+  .var-tile{display:inline-block;background:var(--brass);color:#211a08;font-family:'IBM Plex Mono';font-size:12px;font-weight:600;padding:1px 7px;border-radius:3px;border-bottom:2px solid var(--brass-deep);margin:0 1px;}
+
+  #form-fields{display:flex;flex-direction:column;gap:14px;}
+  .field-card{background:#F7F3E9;border:1px solid var(--paper-line);border-radius:8px;padding:0;position:relative;}
+  .field-tab{position:absolute;top:-11px;left:14px;background:var(--brass);color:#211a08;font-family:'IBM Plex Mono';font-size:11px;font-weight:600;padding:2px 9px;border-radius:4px;}
+  .field-card textarea, .field-card input{width:100%;border:none;background:transparent;padding:18px 14px 12px;font-family:'Kanit';font-size:14px;color:var(--text-dark);resize:vertical;min-height:44px;}
+  .field-card textarea:focus, .field-card input:focus{outline:none;}
+  .no-vars-msg{color:var(--muted-dark);font-size:13px;padding:12px 0;}
+
+  #preview-wrap{margin:14px 30px 0;}
+  #preview-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-dark);margin-bottom:6px;}
+  #preview{background:var(--text-dark);color:#F1EBDC;font-family:'IBM Plex Mono';font-size:13.5px;line-height:1.7;padding:16px;border-radius:8px;max-height:160px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;}
+
+  #ws-footer{padding:16px 30px 22px;display:flex;gap:10px;align-items:center;}
+  #copy-btn{flex:1;background:var(--brass);color:#211a08;border:none;padding:14px;border-radius:8px;font-family:'Kanit';font-weight:600;font-size:15px;cursor:pointer;letter-spacing:.3px;}
+  #copy-btn:hover{background:#c99a3c;}
+  #clear-btn{background:transparent;border:1px solid var(--paper-line);color:var(--text-dark);padding:14px 18px;border-radius:8px;font-family:'Kanit';font-size:14px;cursor:pointer;}
+
+  #image-row{display:flex;align-items:center;gap:10px;margin:14px 30px 0;}
+  #image-preview{width:56px;height:56px;border-radius:6px;object-fit:cover;border:1px solid var(--paper-line);background:var(--paper-2);}
+  #image-upload-label{font-size:12.5px;color:var(--muted-dark);border:1px dashed var(--paper-line);padding:8px 12px;border-radius:6px;cursor:pointer;}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--stamp);color:#fff;padding:11px 22px;border-radius:100px;font-family:'Kanit';font-size:14px;opacity:0;transition:all .25s;pointer-events:none;z-index:50;letter-spacing:.3px;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--paper-line);border-radius:4px;}
+  #sidebar ::-webkit-scrollbar-thumb{background:var(--ink-3);}
+
+  @media (max-width:800px){
+    #app{flex-direction:column;}
+    #sidebar{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--line);}
+    #workspace{height:62vh;}
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div id="sidebar-head">
+      <div class="brand"><span class="mark">§</span><h1>คลัง Prompt</h1></div>
+      <div class="eyebrow">Template Composer</div>
+      <div id="search-wrap"><input id="search" type="text" placeholder="ค้นหาชื่อหรือเนื้อหา…"></div>
+      <button id="new-btn">+ สร้าง Template ใหม่</button>
+    </div>
+    <div id="categories"></div>
+    <div id="list"></div>
+  </aside>
+
+  <!-- WORKSPACE -->
+  <main id="workspace">
+    <div id="ws-empty">
+      <div class="mark">§</div>
+      <div>เลือก Template ทางซ้าย หรือสร้างใหม่เพื่อเริ่มต้น</div>
+    </div>
+
+    <div id="ws-content" style="display:none;flex-direction:column;height:100%;">
+      <div id="ws-head">
+        <div style="flex:1;">
+          <input id="ws-title-input" placeholder="ชื่อ Template">
+          <div id="ws-meta">
+            <input id="f-category" placeholder="หมวดหมู่">
+            <input id="f-tags" placeholder="แท็ก, คั่นด้วยจุลภาค">
+          </div>
+        </div>
+        <div class="ws-actions">
+          <button class="btn btn-delete" id="delete-btn">ลบ</button>
+          <button class="btn btn-save" id="save-btn">บันทึก</button>
+        </div>
+      </div>
+
+      <div id="image-row">
+        <img id="image-preview" src="" style="display:none;">
+        <label id="image-upload-label">📎 แนบภาพตัวอย่าง (สำหรับ Prompt สร้างภาพ)
+          <input type="file" id="image-file" accept="image/*" style="display:none;">
+        </label>
+        <span id="upload-status" style="font-size:12px;color:var(--muted-dark);"></span>
+      </div>
+
+      <div id="mode-toggle">
+        <button id="mode-form" class="active">โหมดฟอร์ม</button>
+        <button id="mode-raw">โหมดข้อความอิสระ</button>
+      </div>
+
+      <div id="editor-area">
+        <textarea id="raw-textarea" style="display:none;" placeholder="พิมพ์ Prompt ที่นี่ ใช้ {{ชื่อตัวแปร}} สำหรับส่วนที่ต้องการให้กรอกทีหลัง"></textarea>
+        <div id="form-fields"></div>
+      </div>
+
+      <div id="preview-wrap">
+        <div id="preview-label">ตัวอย่างผลลัพธ์สุดท้าย</div>
+        <div id="preview"></div>
+      </div>
+
+      <div id="ws-footer">
+        <button id="clear-btn">ล้างค่า</button>
+        <button id="copy-btn">📋 คัดลอก (Copy to Clipboard)</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ================= CONFIG ================= */
+const CONFIG = {
+  // วาง Web App URL ของ Apps Script ที่นี่หลัง Deploy
+  API_URL: 'https://script.google.com/macros/s/PUT_YOUR_DEPLOYMENT_ID_HERE/exec'
+};
+
+/* ================= STATE ================= */
+let items = [];
+let activeId = null;
+let activeItem = null;
+let mode = 'form'; // 'form' | 'raw'
+let activeCategory = 'ทั้งหมด';
+let pendingImageURL = '';
+
+/* ================= UTIL ================= */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+function extractVars(content){
+  const re = /{{\s*([^{}]+?)\s*}}/g;
+  const seen = [];
+  let m;
+  while((m = re.exec(content || '')) !== null){
+    if(!seen.includes(m[1])) seen.push(m[1]);
+  }
+  return seen;
+}
+function uuidLocal(){
+  return 'tmp-' + Math.random().toString(36).slice(2);
+}
+
+/* ================= API ================= */
+async function apiList(){
+  const res = await fetch(`${CONFIG.API_URL}?action=list`);
+  const data = await res.json();
+  return data.ok ? data.items : [];
+}
+async function apiCreate(payload){
+  const res = await fetch(`${CONFIG.API_URL}?action=create&data=${encodeURIComponent(JSON.stringify(payload))}`);
+  return res.json();
+}
+async function apiUpdate(id, payload){
+  const res = await fetch(`${CONFIG.API_URL}?action=update&id=${encodeURIComponent(id)}&data=${encodeURIComponent(JSON.stringify(payload))}`);
+  return res.json();
+}
+async function apiDelete(id){
+  const res = await fetch(`${CONFIG.API_URL}?action=delete&id=${encodeURIComponent(id)}`);
+  return res.json();
+}
+
+/* ---- image upload via hidden iframe POST (CORS workaround) + cache polling ---- */
+function uploadImage(file){
+  return new Promise((resolve, reject)=>{
+    const uploadId = 'up-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    const reader = new FileReader();
+    reader.onload = function(){
+      const base64 = reader.result.split(',')[1];
+
+      const iframeName = 'upload-frame-' + uploadId;
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = CONFIG.API_URL;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      const fields = {
+        action: 'uploadImage',
+        uploadId: uploadId,
+        fileName: file.name,
+        mimeType: file.type,
+        imageData: base64
+      };
+      Object.keys(fields).forEach(key=>{
+        const inp = document.createElement('input');
+        inp.name = key;
+        inp.value = fields[key];
+        form.appendChild(inp);
+      });
+      document.body.appendChild(form);
+      form.submit();
+
+      let attempts = 0;
+      const poll = setInterval(async ()=>{
+        attempts++;
+        try{
+          const res = await fetch(`${CONFIG.API_URL}?action=checkUpload&id=${uploadId}`);
+          const data = await res.json();
+          if(data.status === 'done'){
+            clearInterval(poll);
+            form.remove(); iframe.remove();
+            resolve(data.url);
+          } else if(data.status === 'error'){
+            clearInterval(poll);
+            form.remove(); iframe.remove();
+            reject(data.error);
+          }
+        }catch(err){ /* keep polling */ }
+        if(attempts > 30){
+          clearInterval(poll);
+          form.remove(); iframe.remove();
+          reject('timeout');
+        }
+      }, 1000);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ================= RENDER: SIDEBAR ================= */
+function renderCategories(){
+  const cats = ['ทั้งหมด', ...new Set(items.map(i=>i.Category).filter(Boolean))];
+  const el = document.getElementById('categories');
+  el.innerHTML = '';
+  cats.forEach(c=>{
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (c === activeCategory ? ' active' : '');
+    chip.textContent = c;
+    chip.onclick = ()=>{ activeCategory = c; renderCategories(); renderList(); };
+    el.appendChild(chip);
+  });
+}
+
+function renderList(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const el = document.getElementById('list');
+  el.innerHTML = '';
+
+  let filtered = items.filter(i=>{
+    const matchesCat = activeCategory === 'ทั้งหมด' || i.Category === activeCategory;
+    const matchesQ = !q || (i.Name || '').toLowerCase().includes(q) || (i.Content || '').toLowerCase().includes(q) || (i.Tags || '').toLowerCase().includes(q);
+    return matchesCat && matchesQ;
+  });
+
+  if(filtered.length === 0){
+    el.innerHTML = '<div class="empty-msg">ไม่พบ Template — ลองสร้างใหม่ทางด้านบน</div>';
+    return;
+  }
+
+  filtered.forEach(i=>{
+    const div = document.createElement('div');
+    div.className = 'item' + (i.ID === activeId ? ' active' : '');
+    div.innerHTML = `
+      <div class="row1"><span class="name">${escapeHtml(i.Name || '(ไม่มีชื่อ)')}</span></div>
+      <div class="cat">${escapeHtml(i.Category || 'ไม่มีหมวดหมู่')}</div>
+      <div class="snippet">${escapeHtml((i.Content || '').slice(0,60))}</div>
+    `;
+    div.onclick = ()=> openItem(i.ID);
+    el.appendChild(div);
+  });
+}
+
+function escapeHtml(s){
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ================= WORKSPACE ================= */
+function openItem(id){
+  activeId = id;
+  activeItem = items.find(i=>i.ID === id) || null;
+  renderList();
+  renderWorkspace();
+}
+
+function newItem(){
+  activeId = null;
+  activeItem = { ID:'', Name:'', Category:'', Tags:'', Content:'', Description:'', ImageURL:'' };
+  pendingImageURL = '';
+  renderList();
+  renderWorkspace();
+  document.getElementById('ws-title-input').focus();
+}
+
+function renderWorkspace(){
+  if(!activeItem){
+    document.getElementById('ws-empty').style.display = 'flex';
+    document.getElementById('ws-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('ws-empty').style.display = 'none';
+  document.getElementById('ws-content').style.display = 'flex';
+
+  document.getElementById('ws-title-input').value = activeItem.Name || '';
+  document.getElementById('f-category').value = activeItem.Category || '';
+  document.getElementById('f-tags').value = activeItem.Tags || '';
+  document.getElementById('raw-textarea').value = activeItem.Content || '';
+  document.getElementById('delete-btn').style.display = activeItem.ID ? 'inline-block' : 'none';
+
+  pendingImageURL = activeItem.ImageURL || '';
+  const imgEl = document.getElementById('image-preview');
+  if(pendingImageURL){ imgEl.src = pendingImageURL; imgEl.style.display = 'inline-block'; }
+  else { imgEl.style.display = 'none'; }
+
+  renderFormFields();
+  renderPreview();
+}
+
+function renderFormFields(){
+  const content = document.getElementById('raw-textarea').value;
+  const vars = extractVars(content);
+  const wrap = document.getElementById('form-fields');
+  wrap.innerHTML = '';
+
+  if(vars.length === 0){
+    wrap.innerHTML = '<div class="no-vars-msg">ไม่มีตัวแปรใน Template นี้ — สลับไปโหมดข้อความอิสระเพื่อแก้ไขทั้งหมด หรือใส่ {{ชื่อตัวแปร}} ในเนื้อหาเพื่อสร้างช่องกรอก</div>';
+    return;
+  }
+  vars.forEach(v=>{
+    const card = document.createElement('div');
+    card.className = 'field-card';
+    card.innerHTML = `<span class="field-tab">${escapeHtml(v)}</span><textarea data-var="${escapeHtml(v)}" rows="1" placeholder="กรอกค่าสำหรับ ${escapeHtml(v)}"></textarea>`;
+    wrap.appendChild(card);
+  });
+  wrap.querySelectorAll('textarea').forEach(t=>{
+    t.addEventListener('input', renderPreview);
+  });
+}
+
+function getFormValues(){
+  const values = {};
+  document.querySelectorAll('#form-fields textarea').forEach(t=>{
+    values[t.dataset.var] = t.value;
+  });
+  return values;
+}
+
+function renderPreview(){
+  const content = document.getElementById('raw-textarea').value;
+  let output = content;
+  if(mode === 'form'){
+    const values = getFormValues();
+    output = content.replace(/{{\s*([^{}]+?)\s*}}/g, (match, key)=>{
+      const val = values[key];
+      return (val !== undefined && val !== '') ? val : match;
+    });
+  }
+  document.getElementById('preview').textContent = output;
+}
+
+/* ================= MODE TOGGLE ================= */
+function setMode(m){
+  mode = m;
+  document.getElementById('mode-form').classList.toggle('active', m === 'form');
+  document.getElementById('mode-raw').classList.toggle('active', m === 'raw');
+  document.getElementById('raw-textarea').style.display = m === 'raw' ? 'block' : 'none';
+  document.getElementById('form-fields').style.display = m === 'form' ? 'flex' : 'none';
+  renderPreview();
+}
+
+/* ================= EVENTS ================= */
+document
